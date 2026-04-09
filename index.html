@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>金奇的大卖场⭐️ | Supabase云端版</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:"微软雅黑",sans-serif;background-color:#FFD8DE;background-image:radial-gradient(#FF86A6 6%,transparent 6%),radial-gradient(#FF86A6 6%,transparent 6%);background-size:60px 60px;background-position:0 0,30px 30px;color:#333;line-height:1.6;}
+        header{background:#FF86A6;color:#fff;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;box-shadow:0 2px 8px rgba(0,0,0,0.15);position:sticky;top:0;z-index:99;}
+        .logo{font-size:24px;font-weight:bold;}
+        .nav a{color:#fff;margin-left:12px;text-decoration:none;transition:0.3s;font-size:15px;}
+        .nav a:hover{color:#ffe6ee;}
+        .container{max-width:1200px;margin:30px auto;padding:0 20px;}
+        .box{background:#fff;padding:20px;border-radius:12px;box-shadow:0 3px 15px rgba(0,0,0,0.08);margin-bottom:20px;}
+        h2{margin-bottom:20px;color:#2c3e50;}
+        input,textarea,select{width:100%;padding:12px;margin:8px 0;border:1px #f2b8c4 solid;border-radius:8px;background:#fff5f8;outline:none;}
+        input:focus,textarea:focus{border-color:#FF86A6;}
+        button{padding:10px 18px;background:#FF86A6;color:#fff;border:none;border-radius:8px;cursor:pointer;transition:0.3s;margin:4px;}
+        button:hover{background:#e87595;}
+        .btn-success{background:#27ae60;}
+        .btn-danger{background:#e74c3c;}
+        .btn-edit{background:#3498db;}
+        .btn-back{background:#95a5a6;}
+        .hide{display:none !important;}
+        .search-wrap{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
+        .search-type{width:auto;padding:8px;}
+        #searchInput{flex:1;margin:0;}
+        .goods-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
+        .goods-item{background:#fff;border-radius:12px;overflow:hidden;cursor:pointer;border:1px #f2c8d2 solid;}
+        .goods-img{width:100%;height:180px;object-fit:cover;}
+        .price{color:#e8588a;font-weight:bold;font-size:18px;}
+        .status-tag{display:inline-block;padding:3px 8px;border-radius:4px;font-size:12px;color:#fff;}
+        .status-unsold{background:#27ae60;}
+        .status-sold{background:#95a5a6;}
+        .avatar{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #FF86A6;background:#fff;}
+        .avatar-small{width:40px;height:40px;border-radius:50%;object-fit:cover;}
+        .user-card{display:flex;align-items:center;gap:15px;padding:15px;border:1px #f2c8d2 solid;border-radius:12px;margin:10px 0;background:#fff;position:relative;}
+        .chat-box{height:420px;border:1px #f2c8d2 solid;border-radius:10px;padding:15px;overflow-y:auto;background:#fff5f8;}
+        .msg-item{margin:10px 0;max-width:75%;}
+        .msg-self{margin-left:auto;text-align:right;}
+        .msg-content{padding:10px 14px;border-radius:18px;display:inline-block;}
+        .msg-self .msg-content{background:#FF86A6;color:#fff;}
+        .msg-other .msg-content{background:#f2e1e7;}
+        .msg-time{font-size:11px;color:#999;margin-top:4px;}
+        .chat-send{display:flex;gap:10px;align-items:center;}
+        .add-btn{width:40px;height:40px;border-radius:50%;background:#FF86A6;color:#fff;border:none;font-size:20px;cursor:pointer;}
+        .chat-img{max-width:200px;border-radius:8px;}
+        .mask{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;}
+        .modal{background:#fff;padding:40px 30px;border-radius:16px;text-align:center;width:85%;max-width:400px;}
+        .modal-btn{margin:10px 8px;padding:12px 24px;font-size:16px;}
+        .confirm-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center;}
+        .confirm-box{background:#fff;padding:30px;border-radius:12px;text-align:center;}
+        body.mobile .nav{display:flex;flex-wrap:wrap;gap:8px;}
+        body.mobile .nav a{font-size:14px;margin:0;}
+        body.mobile .logo{font-size:18px;}
+        body.mobile .goods-list{grid-template-columns:repeat(2,1fr);gap:10px;}
+        body.mobile .goods-img{height:120px;}
+        .goods-tip{background:#ffeef3;padding:6px 10px;border-radius:6px;font-size:12px;color:#c94c75;display:inline-block;}
+        .comment-section{margin-top:30px;border-top:2px solid #f2c8d2;padding-top:20px;}
+        .comment-item{background:#fef7f9;border-radius:16px;padding:14px;margin-bottom:15px;border-left:4px solid #FF86A6;}
+        .comment-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;color:#a05c78;}
+        .comment-user{font-weight:bold;display:flex;align-items:center;gap:6px;}
+        .comment-time{font-size:11px;}
+        .comment-content{margin:8px 0;line-height:1.5;}
+        .reply-btn{background:none;color:#e8588a;padding:4px 8px;font-size:12px;border:1px solid #ffb6cc;border-radius:20px;cursor:pointer;}
+        .reply-btn:hover{background:#ffeef3;}
+        .reply-form{margin-left:25px;margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;}
+        .reply-form input{flex:1;margin:0;padding:8px;}
+        .sub-comments{margin-left:35px;margin-top:10px;border-left:2px dashed #ffb6cc;padding-left:15px;}
+        .comment-form{background:#fff0f4;border-radius:24px;padding:15px;margin-bottom:20px;}
+        .loading{text-align:center;padding:40px;color:#999;}
+        .error-text{color:#e74c3c;text-align:center;padding:20px;}
+    </style>
+</head>
+<body>
+    <div class="mask" id="versionModal">
+        <div class="modal"><h3>欢迎进入<br>金奇的大卖场⭐️</h3><div><button class="modal-btn" onclick="setMobile()">手机版</button><button class="modal-btn" onclick="setPc()">电脑版</button></div></div>
+    </div>
+    <div id="confirmModal" class="confirm-modal hide"><div class="confirm-box"><p>是否删除该商品？</p><button onclick="cancelDel()">否</button><button class="btn-danger" onclick="sureDel()">是</button></div></div>
+    <div id="editModal" class="confirm-modal hide"><div class="confirm-box" style="width:90%;max-width:400px;"><h3>修改商品信息</h3><input type="text" id="editName" placeholder="商品名称"><input type="text" id="editPrice" placeholder="商品价格"><textarea id="editDesc" rows="3" placeholder="商品描述"></textarea><select id="editStatus"><option value="unsold">在售</option><option value="sold">已售出</option><option value="off">下架</option></select><button onclick="saveEdit()">保存</button><button class="btn-danger" onclick="closeEdit()">取消</button></div></div>
+    <header>
+        <div class="logo">金奇的大卖场⭐️</div>
+        <div class="nav" id="navBar">
+            <a href="#" onclick="showPage('home')">🏠 首页</a>
+            <a href="#" onclick="showPage('login')" id="loginNav">🔑 登录</a>
+            <a href="#" onclick="showPage('reg')" id="regNav">📝 注册</a>
+            <a href="#" onclick="checkLogin('publish')">📦 发布商品</a>
+            <a href="#" onclick="checkLogin('chatList')">💬 我的聊天</a>
+            <a href="#" onclick="checkLogin('mine')">👧 我的</a>
+            <a href="#" onclick="logout()" id="logoutNav" class="hide">🚪 退出</a>
+        </div>
+    </header>
+    <div class="container">
+        <div id="home" class="page"><div class="box"><h2>🌟 全部闲置商品</h2><div class="search-wrap"><select class="search-type" id="searchType"><option value="goods">搜索商品</option><option value="user">搜索用户</option></select><input type="text" id="searchInput" placeholder="输入关键词..." /><button onclick="searchAll()">搜索</button></div><div id="goodsList" class="goods-list"></div><div id="userListShow"></div></div></div>
+        <div id="goodsDetail" class="page hide"><div class="box" id="detailBox"></div><div class="box comment-section"><h3>📝 商品留言板（公开）</h3><div id="commentListArea"></div><div class="comment-form"><textarea id="newComment" rows="2" placeholder="写下你的评论..."></textarea><button onclick="submitComment()">💬 发布留言</button></div></div></div>
+        <div id="reg" class="page hide"><div class="box"><h2>📝 用户注册</h2><input type="email" id="regEmail" placeholder="邮箱"><input type="text" id="regUser" placeholder="用户名"><input type="password" id="regPwd" placeholder="密码"><button onclick="register()">✅ 立即注册</button></div></div>
+        <div id="login" class="page hide"><div class="box"><h2>🔑 用户登录</h2><input type="email" id="loginEmail" placeholder="邮箱"><input type="password" id="loginPwd" placeholder="密码"><button onclick="login()">✅ 登录</button></div></div>
+        <div id="publish" class="page hide"><div class="box"><h2>📦 发布商品</h2><input type="text" id="goodsName" placeholder="商品名称"><input type="text" id="goodsPrice" placeholder="商品价格"><textarea id="goodsDesc" rows="4" placeholder="商品描述"></textarea><input type="file" id="goodsImg" accept="image/*" onchange="previewImg()"><img id="imgPreview" class="hide" style="width:100%;max-height:300px;border-radius:8px;margin:10px 0;"><button onclick="publishGoods()">提交发布</button></div></div>
+        <div id="mine" class="page hide"><div class="box"><h2>👧 个人中心</h2><div style="text-align:center;margin:20px 0;"><img class="avatar" id="myAvatarShow" src=""><div><input type="file" id="avatarUpload" accept="image/*" onchange="changeAvatar()" style="width:auto;"></div><h3 id="mineName"></h3></div><div><p>修改昵称：</p><input type="text" id="editNick" placeholder="输入新昵称"><button onclick="saveNick()">保存昵称</button></div></div><div class="box"><h3>我的发布</h3><div id="mineGoodsList"></div></div></div>
+        <div id="chatList" class="page hide"><div class="box"><h2>💬 我的聊天</h2><div id="chatListBox"></div></div></div>
+        <div id="chatPage" class="page hide"><div class="box"><h2 id="chatTitle">聊天界面</h2><div class="chat-box" id="chatContent"></div><div class="chat-send"><input type="file" id="chatImgUpload" accept="image/*" onchange="sendChatImg()" class="hide"><div class="add-btn" onclick="document.getElementById('chatImgUpload').click()">+</div><input type="text" id="chatInput" placeholder="输入消息..."><button class="btn-success" onclick="sendMsg()">发送</button></div></div></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ==================== Supabase 配置 ====================
+        // 已替换为你的新项目凭证
+        const SUPABASE_URL = 'https://kmhhndghlwnzisxojwet.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttaGhuZGdobHduemlzeG9qd2V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NjM0MDYsImV4cCI6MjA5MTIzOTQwNn0.dwH6kR6aFiU8jGg9TN3dtosGskge4eZS8Tbx7bC-qZo';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 全局变量
+        let currentUser = null;
+        let currentGoodsId = null;
+        let currentTarget = null;
+        let delGoodsId = null;
+        let editGoodsId = null;
+        let chatChannel = null;
+
+        // 辅助函数
+        function formatTime(t) { let d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
+        function escapeHtml(s) { if (!s) return ''; return s.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
+        function defaultAvatar() { return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCI+PGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiNmZmQ4ZGUiLz48cGF0aCBkPSJNMzUgMjVDMjUgMjUgMjUgMzUgMzUgMzVDMzUgNDUgNDUgNDUgNDUgMzdDNDUgMjUgMzUgMjUgMzUgMjUiIGZpbGw9IiNmZjg2YTYiLz48L3N2Zz4="; }
+
+        function setMobile() { document.body.classList.add("mobile"); document.getElementById("versionModal").classList.add("hide"); showPage('home'); loadGoods(); }
+        function setPc() { document.body.classList.remove("mobile"); document.getElementById("versionModal").classList.add("hide"); showPage('home'); loadGoods(); }
+
+        function showPage(name) {
+            document.querySelectorAll(".page").forEach(p => p.classList.add("hide"));
+            document.getElementById(name).classList.remove("hide");
+            if (name === 'chatPage' && currentTarget) {
+                loadChatMessages();
+                if (chatChannel) chatChannel.unsubscribe();
+                chatChannel = supabase.channel('msg').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, () => { if (currentTarget) loadChatMessages(); }).subscribe();
+            } else if (chatChannel) { chatChannel.unsubscribe(); chatChannel = null; }
+        }
+
+        function checkLogin(page) { if (!currentUser) { alert("请先登录"); showPage("login"); return; } showPage(page); if (page === "mine") loadMyGoods(); if (page === "chatList") loadChatList(); }
+
+        // 注册
+        async function register() {
+            let email = document.getElementById("regEmail").value.trim();
+            let username = document.getElementById("regUser").value.trim();
+            let pwd = document.getElementById("regPwd").value.trim();
+            if (!email || !username || !pwd) { alert("请填写完整信息"); return; }
+            let { data: existing } = await supabase.from('profiles').select('username').eq('username', username).maybeSingle();
+            if (existing) { alert("用户名已存在"); return; }
+            let { error } = await supabase.auth.signUp({ email, password: pwd, options: { data: { username } } });
+            if (error) alert("注册失败：" + error.message);
+            else { alert("注册成功！请登录"); showPage("login"); }
+        }
+
+        // 登录
+        async function login() {
+            let email = document.getElementById("loginEmail").value.trim();
+            let pwd = document.getElementById("loginPwd").value.trim();
+            if (!email || !pwd) { alert("请输入邮箱和密码"); return; }
+            let { data, error } = await supabase.auth.signInWithPassword({ email, password: pwd });
+            if (error) { alert("登录失败：" + error.message); return; }
+            currentUser = data.user;
+            alert("登录成功！");
+            showPage("home");
+            refreshNav();
+            loadGoods();
+        }
+
+        async function logout() { await supabase.auth.signOut(); currentUser = null; refreshNav(); showPage("home"); loadGoods(); alert("已退出"); }
+
+        function refreshNav() {
+            if (currentUser) {
+                document.getElementById("loginNav").classList.add("hide");
+                document.getElementById("regNav").classList.add("hide");
+                document.getElementById("logoutNav").classList.remove("hide");
+            } else {
+                document.getElementById("loginNav").classList.remove("hide");
+                document.getElementById("regNav").classList.remove("hide");
+                document.getElementById("logoutNav").classList.add("hide");
+            }
+        }
+
+        // 加载商品列表
+        async function loadGoods() {
+            document.getElementById("goodsList").innerHTML = '<div class="loading">加载中...</div>';
+            let { data, error } = await supabase.from('goods').select('*, profiles!goods_uid_fkey(nick,avatar)').neq('status', 'off').order('created_at', { ascending: false });
+            if (error) { document.getElementById("goodsList").innerHTML = '<div class="error-text">加载失败</div>'; return; }
+            let html = "";
+            for (let g of data) {
+                let statusText = g.status === 'sold' ? '已售出' : '在售';
+                let statusCls = g.status === 'sold' ? 'status-sold' : 'status-unsold';
+                let sellerNick = g.profiles?.nick || g.uid;
+                html += `<div class="goods-item" onclick="goDetail('${g.id}')"><img class="goods-img" src="${g.img_url || defaultAvatar()}"><div style="padding:15px;"><span class="status-tag ${statusCls}">${statusText}</span><h4>${escapeHtml(g.name)}</h4><div class="price">¥${g.price}</div><p>👤 ${escapeHtml(sellerNick)}</p><p>${escapeHtml(g.description || "暂无描述")}</p></div></div>`;
+            }
+            document.getElementById("goodsList").innerHTML = html || '<div class="empty-state">暂无商品，快去发布吧~</div>';
+        }
+
+        // 商品详情
+        async function goDetail(goodsId) {
+            currentGoodsId = goodsId;
+            let { data: g } = await supabase.from('goods').select('*, profiles!goods_uid_fkey(nick,avatar)').eq('id', goodsId).single();
+            if (!g) return;
+            let statusText = g.status === 'unsold' ? '在售' : (g.status === 'sold' ? '已售出' : '下架');
+            document.getElementById("detailBox").innerHTML = `<img style="width:100%;border-radius:8px;" src="${g.img_url || defaultAvatar()}"><h2>${escapeHtml(g.name)}</h2><div>状态：${statusText}</div><div class="price">售价：¥${g.price}</div><p>商品描述：${escapeHtml(g.description || "无")}</p><div class="user-card"><img class="avatar-small" src="${g.profiles?.avatar || defaultAvatar()}"><div>发布者：${escapeHtml(g.profiles?.nick || g.uid)}</div></div><div style="margin-top:15px;"><button class="btn-success" onclick="startChat('${g.uid}')">私聊卖家</button><button class="btn-back" onclick="showPage('home')">返回首页</button></div>`;
+            showPage("goodsDetail");
+            loadComments();
+        }
+
+        // 发布商品
+        async function publishGoods() {
+            if (!currentUser) { alert("请先登录"); showPage("login"); return; }
+            let name = document.getElementById("goodsName").value.trim();
+            let price = document.getElementById("goodsPrice").value.trim();
+            let desc = document.getElementById("goodsDesc").value.trim();
+            let imgUrl = document.getElementById("imgPreview").src;
+            if (!name || !price) { alert("名称和价格必填"); return; }
+            let { error } = await supabase.from('goods').insert({ name, price, description: desc, img_url: imgUrl || defaultAvatar(), uid: currentUser.id, status: 'unsold' });
+            if (error) { alert("发布失败：" + error.message); return; }
+            alert("发布成功");
+            document.getElementById("goodsName").value = "";
+            document.getElementById("goodsPrice").value = "";
+            document.getElementById("goodsDesc").value = "";
+            document.getElementById("imgPreview").src = "";
+            document.getElementById("imgPreview").classList.add("hide");
+            showPage("home");
+            loadGoods();
+        }
+
+        // 我的商品
+        async function loadMyGoods() {
+            if (!currentUser) return;
+            let { data } = await supabase.from('goods').select('*').eq('uid', currentUser.id).order('created_at', { ascending: false });
+            let html = "";
+            for (let g of data) {
+                let statusText = g.status === 'unsold' ? '在售' : (g.status === 'sold' ? '已售出' : '下架');
+                html += `<div class="user-card" onclick="goDetail('${g.id}')"><div style="flex:1;"><h4>${escapeHtml(g.name)}</h4><div class="price">¥${g.price}</div><div>状态：${statusText}</div></div><button class="btn-edit" onclick="openEdit('${g.id}');event.stopPropagation()">修改</button><button class="btn-danger" onclick="delGoods('${g.id}');event.stopPropagation()">删除</button></div>`;
+            }
+            document.getElementById("mineGoodsList").innerHTML = html || '<div class="empty-state">暂无发布</div>';
+            let { data: profile } = await supabase.from('profiles').select('nick,avatar').eq('id', currentUser.id).single();
+            if (profile) {
+                document.getElementById("myAvatarShow").src = profile.avatar || defaultAvatar();
+                document.getElementById("mineName").innerText = profile.nick || currentUser.email;
+            }
+        }
+
+        function openEdit(gid) { editGoodsId = gid; document.getElementById("editModal").classList.remove("hide"); supabase.from('goods').select('*').eq('id', gid).single().then(r => { if (r.data) { document.getElementById("editName").value = r.data.name; document.getElementById("editPrice").value = r.data.price; document.getElementById("editDesc").value = r.data.description || ''; document.getElementById("editStatus").value = r.data.status || 'unsold'; } }); }
+        async function saveEdit() { if (!editGoodsId) return; await supabase.from('goods').update({ name: document.getElementById("editName").value, price: document.getElementById("editPrice").value, description: document.getElementById("editDesc").value, status: document.getElementById("editStatus").value }).eq('id', editGoodsId); alert("修改成功"); closeEdit(); loadMyGoods(); loadGoods(); }
+        function closeEdit() { document.getElementById("editModal").classList.add("hide"); editGoodsId = null; }
+        function delGoods(gid) { delGoodsId = gid; document.getElementById("confirmModal").classList.remove("hide"); }
+        function cancelDel() { document.getElementById("confirmModal").classList.add("hide"); delGoodsId = null; }
+        async function sureDel() { if (!delGoodsId) return; await supabase.from('goods').delete().eq('id', delGoodsId); alert("删除成功"); cancelDel(); loadMyGoods(); loadGoods(); }
+
+        function previewImg() {
+            let f = document.getElementById("goodsImg").files[0];
+            if (!f) return;
+            let r = new FileReader();
+            r.onload = e => { document.getElementById("imgPreview").src = e.target.result; document.getElementById("imgPreview").classList.remove("hide"); };
+            r.readAsDataURL(f);
+        }
+
+        async function changeAvatar() {
+            let f = document.getElementById("avatarUpload").files[0];
+            if (!f || !currentUser) return;
+            let r = new FileReader();
+            r.onload = async e => { await supabase.from('profiles').update({ avatar: e.target.result }).eq('id', currentUser.id); alert("头像更新成功"); loadMyGoods(); };
+            r.readAsDataURL(f);
+        }
+        async function saveNick() {
+            let n = document.getElementById("editNick").value.trim();
+            if (!n) { alert("昵称不能为空"); return; }
+            await supabase.from('profiles').update({ nick: n }).eq('id', currentUser.id);
+            alert("修改成功"); loadMyGoods();
+        }
+
+        // 搜索
+        async function searchAll() {
+            let kw = document.getElementById("searchInput").value.trim(), type = document.getElementById("searchType").value;
+            if (!kw) { loadGoods(); document.getElementById("userListShow").innerHTML = ""; return; }
+            if (type === "goods") {
+                let { data } = await supabase.from('goods').select('*, profiles!goods_uid_fkey(nick)').ilike('name', `%${kw}%`).neq('status', 'off');
+                let html = "";
+                for (let g of data) html += `<div class="goods-item" onclick="goDetail('${g.id}')"><img class="goods-img" src="${g.img_url || defaultAvatar()}"><div><h4>${escapeHtml(g.name)}</h4><div class="price">¥${g.price}</div><p>👤 ${escapeHtml(g.profiles?.nick || g.uid)}</p></div></div>`;
+                document.getElementById("goodsList").innerHTML = html || '<div class="empty-state">没有找到</div>';
+                document.getElementById("userListShow").innerHTML = "";
+            } else {
+                let { data } = await supabase.from('profiles').select('id,nick,avatar').ilike('nick', `%${kw}%`);
+                let html = "";
+                for (let u of data) html += `<div class="user-card"><img class="avatar-small" src="${u.avatar || defaultAvatar()}"><div>${escapeHtml(u.nick)}</div><button onclick="startChat('${u.id}')">私聊</button></div>`;
+                document.getElementById("userListShow").innerHTML = html || '<div class="empty-state">没有找到</div>';
+                document.getElementById("goodsList").innerHTML = "";
+            }
+        }
+
+        // 聊天功能
+        function startChat(targetId) {
+            if (!currentUser) { alert("请先登录"); showPage("login"); return; }
+            if (targetId === currentUser.id) { alert("不能私聊自己"); return; }
+            currentTarget = targetId;
+            showPage("chatPage");
+            loadChatMessages();
+        }
+
+        async function loadChatMessages() {
+            if (!currentUser || !currentTarget) return;
+            let { data } = await supabase.from('messages').select('*').or(`and(from_id.eq.${currentUser.id},to_id.eq.${currentTarget}),and(from_id.eq.${currentTarget},to_id.eq.${currentUser.id})`).order('created_at', { ascending: true });
+            let html = "";
+            for (let m of data) {
+                let isSelf = m.from_id === currentUser.id;
+                let content = m.type === 'img' ? `<img src="${m.content}" class="chat-img">` : escapeHtml(m.content);
+                html += `<div class="msg-item ${isSelf ? 'msg-self' : 'msg-other'}"><div class="msg-content">${content}</div><div class="msg-time">${formatTime(m.created_at)}</div></div>`;
+            }
+            document.getElementById("chatContent").innerHTML = html || "<p>暂无消息</p>";
+            document.getElementById("chatContent").scrollTop = document.getElementById("chatContent").scrollHeight;
+        }
+
+        async function sendMsg() {
+            let txt = document.getElementById("chatInput").value.trim();
+            if (!txt || !currentTarget) return;
+            await supabase.from('messages').insert({ from_id: currentUser.id, to_id: currentTarget, content: txt, type: 'text' });
+            document.getElementById("chatInput").value = "";
+            loadChatMessages();
+        }
+        function sendChatImg() {
+            let f = document.getElementById("chatImgUpload").files[0];
+            if (!f || !currentTarget) return;
+            let r = new FileReader();
+            r.onload = async e => { await supabase.from('messages').insert({ from_id: currentUser.id, to_id: currentTarget, content: e.target.result, type: 'img' }); loadChatMessages(); };
+            r.readAsDataURL(f);
+        }
+
+        async function loadChatList() {
+            if (!currentUser) return;
+            let { data } = await supabase.from('messages').select('from_id,to_id').or(`from_id.eq.${currentUser.id},to_id.eq.${currentUser.id}`).order('created_at', { ascending: false });
+            let userIds = new Set();
+            data?.forEach(m => { if (m.from_id !== currentUser.id) userIds.add(m.from_id); if (m.to_id !== currentUser.id) userIds.add(m.to_id); });
+            let html = "";
+            for (let uid of userIds) {
+                let { data: prof } = await supabase.from('profiles').select('nick').eq('id', uid).single();
+                html += `<div class="user-card" onclick="startChat('${uid}')"><div><b>${escapeHtml(prof?.nick || uid)}</b></div><button>进入聊天</button></div>`;
+            }
+            document.getElementById("chatListBox").innerHTML = html || "<p>暂无聊天记录</p>";
+        }
+
+        // 留言板功能（公开可见）
+        async function loadComments() {
+            if (!currentGoodsId) return;
+            let { data } = await supabase.from('comments').select('*, profiles!user_id(nick,avatar)').eq('goods_id', currentGoodsId).order('created_at', { ascending: true });
+            let html = "";
+            for (let c of data) {
+                html += `<div class="comment-item"><div class="comment-meta"><div class="comment-user"><img class="avatar-small" src="${c.profiles?.avatar || defaultAvatar()}" style="width:24px;height:24px;"> ${escapeHtml(c.profiles?.nick || '用户')}</div><div class="comment-time">${formatTime(c.created_at)}</div></div><div class="comment-content">${escapeHtml(c.content)}</div></div>`;
+            }
+            document.getElementById("commentListArea").innerHTML = html || "<p>暂无留言，抢沙发～</p>";
+        }
+
+        async function submitComment() {
+            if (!currentUser) { alert("请先登录"); showPage("login"); return; }
+            let content = document.getElementById("newComment").value.trim();
+            if (!content) { alert("请输入留言内容"); return; }
+            if (!currentGoodsId) return;
+            await supabase.from('comments').insert({ goods_id: currentGoodsId, user_id: currentUser.id, content: content });
+            document.getElementById("newComment").value = "";
+            loadComments();
+        }
+
+        // 监听认证状态
+        supabase.auth.onAuthStateChange((e, s) => { if (s?.user) { currentUser = s.user; refreshNav(); loadGoods(); } else { currentUser = null; refreshNav(); } });
+        window.onload = async () => { let s = await supabase.auth.getSession(); currentUser = s.data.session?.user || null; refreshNav(); loadGoods(); };
+    </script>
+</body>
+</html>
