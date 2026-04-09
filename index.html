@@ -103,10 +103,10 @@
         <div id="chatPage" class="page hide"><div class="box"><h2 id="chatTitle">聊天界面</h2><div class="chat-box" id="chatContent"></div><div class="chat-send"><input type="file" id="chatImgUpload" accept="image/*" onchange="sendChatImg()" class="hide"><div class="add-btn" onclick="document.getElementById('chatImgUpload').click()">+</div><input type="text" id="chatInput" placeholder="输入消息..."><button class="btn-success" onclick="sendMsg()">发送</button></div></div></div>
     </div>
 
-    <!-- 仅引入一次Supabase SDK -->
+    <!-- 仅引入一次Supabase SDK，绝对不重复 -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // 仅声明一次supabase，使用你提供的最新配置
+        // 仅声明一次supabase，使用你提供的最新配置，绝对不重复
         const SUPABASE_URL = 'https://kmhhndghlwnzisxojwet.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImttaGhuZGdobHduemlzeG9qd2V0Iiwicm9sIjoiYW5vbiIsImlhdCI6MTc3NTY2MzQwNiwiZXhwIjoyMDkxMjM5NDA2fQ.dwH6kR6aFiU8jGg9TN3dtosGskge4eZS8Tbx7bC-qZo';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -127,7 +127,7 @@
             return "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCI+PGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiNmZmQ4ZGUiLz48cGF0aCBkPSJNMzUgMjVDMjUgMjUgMjUgMzUgMzUgMzVDMzUgNDUgNDUgNDUgNDUgMzdDNDUgMjUgMzUgMjUgMzUgMjUiIGZpbGw9IiNmZjg2YTYiLz48L3N2Zz4="; 
         }
 
-        // 版本切换函数（确保在全局作用域）
+        // 版本切换函数（全局作用域，确保按钮能调用）
         function setMobile() { 
             document.body.classList.add("mobile"); 
             document.getElementById("versionModal").classList.add("hide"); 
